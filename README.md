@@ -1,28 +1,65 @@
-# Gerenciador de Tarefas (Python)
+Gerenciador de Tarefas (Python + Tkinter)
+Este é um projeto simples de gerenciador de tarefas feito em Python. Ele possui uma interface gráfica básica usando Tkinter, e armazena as tarefas localmente em um arquivo .json, criado automaticamente na mesma pasta do programa.
 
-Um gerenciador de tarefas simples feito em Python que salva os dados em um arquivo `.json` na área de trabalho.
+Funcionalidades
+Interface gráfica simples e intuitiva (Tkinter)
 
-## Funcionalidades
+Criação automática do arquivo tarefas.json
 
-- 📋 Listar tarefas
-- ➕ Adicionar novas tarefas
-- ✅ Marcar tarefas como concluídas
-- 💾 Dados salvos automaticamente no arquivo `tarefas.json`
+Adição de novas tarefas
 
-## Como usar
+Listagem de tarefas com status (✅ Concluída ou ❌ Pendente)
 
-1. Execute o script `gerenciador.py`
-2. Escolha uma das opções do menu:
-   - 1: Listar tarefas
-   - 2: Adicionar nova tarefa
-   - 3: Marcar tarefa como concluída
-   - 4: Sair
+Marcação de tarefas como concluídas com um clique
 
-> ⚠️ O arquivo `tarefas.json` será criado na sua área de trabalho automaticamente.
+Armazenamento local (JSON)
 
-## Requisitos
+Tecnologias utilizadas
+Python 3
 
-- Python 3.x
+Tkinter (interface gráfica)
+
+Bibliotecas padrão: json, os, pathlib
+
+Como executar
+Clone o repositório:
+
+bash
+Copy
+Edit
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+Execute o programa:
+
+bash
+Copy
+Edit
+python gerenciador_tarefas.py
+Interface gráfica
+A aplicação abre uma janela com os seguintes elementos:
+
+Campo de texto para inserir uma nova tarefa
+
+Botão "Adicionar Tarefa"
+
+Lista de tarefas exibidas com status
+
+Botão "Concluir" ao lado de cada tarefa
+
+Tudo é salvo automaticamente no arquivo tarefas.json localizado na mesma pasta do programa.
+
+Estrutura do arquivo tarefas.json
+json
+Copy
+Edit
+[
+  {
+    "nome": "Estudar Python",
+    "Concluída": false
+  }
+]
+Licença
+Este projeto está licenciado sob a licença MIT.
 
 ## Autor
 
