@@ -2,37 +2,29 @@ import json
 import os
 from pathlib import Path
 
-
+caminho = Path(__file__).parent / "tarefas.json"
 
 def criar_arquivo():
-    desktop = Path(os.path.expanduser("~")) / "OneDrive" / "Área de Trabalho" / "tarefas.json"
-
-    if not os.path.exists(desktop):
-        with open(desktop, "w") as arquivo:
+    if not caminho.exists():
+        with open(caminho, "w") as arquivo:
             json.dump([], arquivo)
-            print(f"Arquivo 'tarefas.json' criado na Área de Trabalho.")
+            print(f"Arquivo 'tarefas.json' criado na pasta do programa.")
     else:
-        print(f"Arquivo 'tarefas.json' já existe na Área de Trabalho.")
-
-
+        print(f"Arquivo 'tarefas.json' já existe.")
 
 def listar_tarefas():
-    caminho = Path(os.path.expanduser("~")) / "OneDrive" / "Área de Trabalho" / "tarefas.json"
     with open(caminho, "r") as arquivo:
         tarefas = json.load(arquivo)
 
         if not tarefas:
-            print("Nenhuma tarefa cadastrada.\n\n")
+            print("Nenhuma tarefa cadastrada.\n")
         else:
             for i, tarefa in enumerate(tarefas):
                 status = "✅" if tarefa["Concluída"] else "❌"
                 print(f"{i+1}. {tarefa['nome']} [{status}]")
 
-
-
 def adicionar_tarefa():
-    caminho = Path(os.path.expanduser("~")) / "OneDrive" / "Área de Trabalho" / "tarefas.json"
-    nome_tarefa = input("Por favor, insira o nome da tarefa que deseja adicionar: ")
+    nome_tarefa = input("Digite o nome da tarefa: ")
     nova_tarefa = {
         "nome": nome_tarefa,
         "Concluída": False
@@ -41,38 +33,33 @@ def adicionar_tarefa():
     with open(caminho, 'r') as arquivo:
         tarefas = json.load(arquivo)
 
-        tarefas.append(nova_tarefa)
+    tarefas.append(nova_tarefa)
 
-        with open(caminho, 'w') as arquivo:
-            json.dump(tarefas, arquivo, indent = 4)
+    with open(caminho, 'w') as arquivo:
+        json.dump(tarefas, arquivo, indent=4)
 
-        print(f"Tarefa '{nome_tarefa}' adicionada com sucesso!")
-
+    print(f"Tarefa '{nome_tarefa}' adicionada com sucesso!")
 
 def marcar_concluida():
-    caminho = Path(os.path.expanduser("~")) / "OneDrive" / "Área de Trabalho" / "tarefas.json"
     listar_tarefas()
     try:
-        tarefa_num = int(input("\nDigite o número da tarefa que deseja marcar como concluída: "))
+        tarefa_num = int(input("\nDigite o número da tarefa concluída: "))
         with open(caminho, 'r') as arquivo:
             tarefas = json.load(arquivo)
 
         if 1 <= tarefa_num <= len(tarefas):
-            tarefas[tarefa_num - 1]["Concluída"] = True 
+            tarefas[tarefa_num - 1]["Concluída"] = True
 
             with open(caminho, 'w') as arquivo:
                 json.dump(tarefas, arquivo, indent=4)
 
             print(f"Tarefa '{tarefas[tarefa_num - 1]['nome']}' marcada como concluída!")
         else:
-            print("Número de tarefa inválido.")
+            print("Número inválido.")
     except ValueError:
-        print("Por favor, insira um número válido.")
-
-
+        print("Digite um número válido.")
 
 def menu():
-
     while True:
         print("-------- Gerenciador de Tarefas --------")
         print("\n1 - Listar Tarefas")
@@ -80,20 +67,18 @@ def menu():
         print("3 - Marcar tarefa como concluída")
         print("4 - Sair")
         print("----------------------------------------")
-        opcao = input("\nPor favor, digite qual opção você deseja executar: ")
+        opcao = input("\nEscolha uma opção: ")
 
         if opcao == '1':
             listar_tarefas()
-
-        if opcao == '2':
+        elif opcao == '2':
             adicionar_tarefa()
-
-        if opcao == '3':
+        elif opcao == '3':
             marcar_concluida()
-
-        if opcao == '4':
+        elif opcao == '4':
             break
+        else:
+            print("Opção inválida.")
 
 criar_arquivo()
-
 menu()
