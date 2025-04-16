@@ -1,84 +1,64 @@
 import json
 import os
 from pathlib import Path
+import tkinter as tk
+from tkinter import messagebox, simpledialog, ttk
 
 caminho = Path(__file__).parent / "tarefas.json"
 
 def criar_arquivo():
     if not caminho.exists():
-        with open(caminho, "w") as arquivo:
-            json.dump([], arquivo)
-            print(f"Arquivo 'tarefas.json' criado na pasta do programa.")
-    else:
-        print(f"Arquivo 'tarefas.json' já existe.")
+        with open(caminho, "w") as f:
+            json.dump([], f)
 
-def listar_tarefas():
-    with open(caminho, "r") as arquivo:
-        tarefas = json.load(arquivo)
+def carregar_tarefas():
+    with open(caminho, "r") as f:
+        return json.load(f)
 
-        if not tarefas:
-            print("Nenhuma tarefa cadastrada.\n")
-        else:
-            for i, tarefa in enumerate(tarefas):
-                status = "✅" if tarefa["Concluída"] else "❌"
-                print(f"{i+1}. {tarefa['nome']} [{status}]")
+def salvar_tarefas(tarefas):
+    with open(caminho, "w") as f:
+        json.dump(tarefas, f, indent=4)
 
-def adicionar_tarefa():
-    nome_tarefa = input("Digite o nome da tarefa: ")
-    nova_tarefa = {
-        "nome": nome_tarefa,
-        "Concluída": False
-    }
+def atualizar_lista():
+    tarefas = carregar_tarefas()
+    lista.delete(*lista.get_children())
+    for i, tarefa in enumerate(tarefas):
+        status = "Concluída" if tarefa["Concluída"] else "Pendente"
+        lista.insert("", "end", iid=i, values=(tarefa["nome"], status))
 
-    with open(caminho, 'r') as arquivo:
-        tarefas = json.load(arquivo)
-
-    tarefas.append(nova_tarefa)
-
-    with open(caminho, 'w') as arquivo:
-        json.dump(tarefas, arquivo, indent=4)
-
-    print(f"Tarefa '{nome_tarefa}' adicionada com sucesso!")
+def adicionar():
+    nome = simpledialog.askstring("Nova Tarefa", "Digite o nome da tarefa:")
+    if nome:
+        tarefas = carregar_tarefas()
+        tarefas.append({"nome": nome, "Concluída": False})
+        salvar_tarefas(tarefas)
+        atualizar_lista()
 
 def marcar_concluida():
-    listar_tarefas()
-    try:
-        tarefa_num = int(input("\nDigite o número da tarefa concluída: "))
-        with open(caminho, 'r') as arquivo:
-            tarefas = json.load(arquivo)
+    selecionado = lista.focus()
+    if selecionado:
+        tarefas = carregar_tarefas()
+        tarefas[int(selecionado)]["Concluída"] = True
+        salvar_tarefas(tarefas)
+        atualizar_lista()
+    else:
+        messagebox.showwarning("Aviso", "Selecione uma tarefa.")
 
-        if 1 <= tarefa_num <= len(tarefas):
-            tarefas[tarefa_num - 1]["Concluída"] = True
-
-            with open(caminho, 'w') as arquivo:
-                json.dump(tarefas, arquivo, indent=4)
-
-            print(f"Tarefa '{tarefas[tarefa_num - 1]['nome']}' marcada como concluída!")
-        else:
-            print("Número inválido.")
-    except ValueError:
-        print("Digite um número válido.")
-
-def menu():
-    while True:
-        print("-------- Gerenciador de Tarefas --------")
-        print("\n1 - Listar Tarefas")
-        print("2 - Adicionar nova tarefa")
-        print("3 - Marcar tarefa como concluída")
-        print("4 - Sair")
-        print("----------------------------------------")
-        opcao = input("\nEscolha uma opção: ")
-
-        if opcao == '1':
-            listar_tarefas()
-        elif opcao == '2':
-            adicionar_tarefa()
-        elif opcao == '3':
-            marcar_concluida()
-        elif opcao == '4':
-            break
-        else:
-            print("Opção inválida.")
-
+#Interface
 criar_arquivo()
-menu()
+root = tk.Tk()
+root.title("Gerenciador de Tarefas")
+
+lista = ttk.Treeview(root, columns=("Nome", "Status"), show="headings")
+lista.heading("Nome", text="Tarefa")
+lista.heading("Status", text="Status")
+lista.pack(padx=10, pady=10, fill="both", expand=True)
+
+frame_botoes = tk.Frame(root)
+frame_botoes.pack(pady=5)
+
+tk.Button(frame_botoes, text="Adicionar Tarefa", command=adicionar).pack(side="left", padx=5)
+tk.Button(frame_botoes, text="Marcar como Concluída", command=marcar_concluida).pack(side="left", padx=5)
+
+atualizar_lista()
+root.mainloop()
